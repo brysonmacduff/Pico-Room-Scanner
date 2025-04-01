@@ -1,0 +1,7 @@
+# Exclude build directory.
+build
+
+# Exclude VS code config files
+.vscode
+
+serial_log.txt

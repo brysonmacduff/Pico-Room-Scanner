@@ -1,15 +1,8 @@
 file(GLOB SRCS "*.h" "*.cpp")
 
-#set(PICO_SDK_HARWARE_PWM_INC ${PICO_SDK_PATH}/src/rp2_common/hardware_pwm/include)
-
-#target_include_directories(${SRC_LIB} PUBLIC ${CMAKE_SOURCE_DIR}/inc ${PICO_CORE_INC_PATH} ${PICO_SDK_HARWARE_PWM_INC})
-
-#target_link_libraries(${SRC_LIB} pico_stdlib ${PULSE_WIDTH_MODULATOR})
-
-# create an executable that includes the file with the main function and link it to the previously create library
 add_executable(${PROJECT_NAME} ${SRCS})
 
-target_link_libraries(${PROJECT_NAME} pico_stdlib servo)
+target_link_libraries(${PROJECT_NAME} pico_stdlib servo lidar)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # configure to use stdout over usb

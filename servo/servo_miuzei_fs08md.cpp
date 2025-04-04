@@ -22,9 +22,7 @@ bool ServoMiuzeiFS08MD::SetTargetAngle(float degrees)
     // compute the duty cycle
     const float duty_cycle = static_cast<float>(pulse_width_length.count()) / static_cast<float>(PWM_PERIOD.count());
 
-    m_pwm.SetDutyCycle(duty_cycle);
-
-    return true;
+    return m_pwm.SetDutyCycle(duty_cycle);
 }
 
 

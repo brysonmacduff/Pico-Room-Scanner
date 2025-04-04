@@ -4,18 +4,15 @@
     - Note that this project is designed to use specific hardware devices. Alternative or equivalent hardware devices are not guaranteed to be supported.
     - Lidar
         - Benewake TF Luna
-        - https://files.seeedstudio.com/wiki/Grove-TF_Mini_LiDAR/res/SJ-PM-TF-Luna-A03-Product-Manual.pdf
-        - https://www.amazon.ca/dp/B088BBJ9SQ?ref=ppx_yo2ov_dt_b_fed_asin_title
     - Servo
         - Miuzei FS08MD
-        - https://www.amazon.ca/dp/B0CCCY92VP?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1
 * Build Instructions
     - cmake -S . -B build
     - cd build
     - make
 * Run Instructions
     - Transfer uf2 file from build directory to Raspberry Pi Pico W drive.
-* Reading Test Firmware USB Serial Output
+* Reading Firmware USB Serial Output
     - Manual
         - Identify serial port
             - sudo dmesg | tail

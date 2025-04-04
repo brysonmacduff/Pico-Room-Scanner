@@ -2,10 +2,8 @@ file(GLOB SRCS "*.h" "*.cpp")
 
 add_executable(${PROJECT_NAME} ${SRCS})
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/inc)
-
-# Add pico_stdlib library which aggregates commonly used features
-target_link_libraries(${PROJECT_NAME} pico_stdlib hardware_uart ${PULSE_WIDTH_MODULATOR})
+target_link_libraries(${PROJECT_NAME} pico_stdlib servo lidar)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # configure to use stdout over usb
 pico_enable_stdio_usb(${PROJECT_NAME} 1)

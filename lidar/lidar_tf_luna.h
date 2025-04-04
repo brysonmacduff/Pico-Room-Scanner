@@ -6,18 +6,27 @@
 
 namespace RoomScanner
 {
+
+struct TfLunaSensorData
+{
+    uint32_t distance_cm;
+    uint32_t temperature_c;
+    uint32_t signal_strength;
+
+    TfLunaSensorData() = default;
+    TfLunaSensorData(const TfLunaSensorData& other)
+    {
+        distance_cm = other.distance_cm;
+        temperature_c = other.temperature_c;
+        signal_strength = other.signal_strength;
+    }
+};
+
 // The Raspberry Pi Pico only supports two UART instances. Therefore, this class contains a static UART RX handler for each UART instance.
 // Similarly, the static UART RX handlers deposit the received data into a pair of corrosponding static structs.
 class LidarTfLuna : public ILidar
 {
 public:
-
-    struct SensorData
-    {
-        uint32_t distance_cm;
-        uint32_t temperature_c;
-        uint32_t signal_strength;
-    };
 
     ~LidarTfLuna() = default;
     // Note that this class does not validate that the provided UART arguments are valid. Consult the pico pin layout for more information.
@@ -25,7 +34,7 @@ public:
     // Returns the distance in centimeters by default
     uint32_t GetDistance() override;
     bool InitializeUart();
-    SensorData GetSensorData() const;
+    TfLunaSensorData GetSensorData();
 
 protected:
 
@@ -44,17 +53,26 @@ protected:
     static constexpr size_t UART_RX_BUFFER_SIZE = 9;
     static constexpr uint32_t UART_TEMPERATURE_DIVISOR = 8;
     static constexpr uint32_t UART_TEMPERATURE_OFFSET = 256;
-    
-    // Sensor data will be saved in the static struct corrosponding to m_uart_id (UART instance zero or one)
-    static SensorData uart0_sensor_data;
-    static SensorData uart1_sensor_data;
 
     uart_inst_t* m_uart_id;
     uint8_t m_uart_tx_gpio;
     uint8_t m_uart_rx_gpio;
-    
+
+    static TfLunaSensorData& GetUart0SensorData()
+    {
+        static TfLunaSensorData uart0_sensor_data = {};
+        return uart0_sensor_data;
+    }
+
+    static TfLunaSensorData& GetUart1SensorData()
+    {
+        static TfLunaSensorData uart1_sensor_data = {};
+        return uart1_sensor_data;
+    }
+
     // The UART RX handler function that will be used corrosponds to m_uart_id (UART instance zero or one)
     static void UartZeroRxHandler();
     static void UartOneRxHandler();
+
 };
 }

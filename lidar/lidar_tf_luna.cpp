@@ -1,6 +1,5 @@
 #include "lidar_tf_luna.h"
 
-
 namespace RoomScanner
 {
 LidarTfLuna::LidarTfLuna(uart_inst_t* uart_instance, uint8_t uart_tx_gpio, uint8_t uart_rx_gpio)
@@ -12,11 +11,11 @@ uint32_t LidarTfLuna::GetDistance()
 {
     if(m_uart_id == uart0)
     {
-        return uart0_sensor_data.distance_cm;
+        return GetUart0SensorData().distance_cm;
     }
     else
     {
-        return uart1_sensor_data.distance_cm;
+        return GetUart1SensorData().distance_cm;
     }
 }
 
@@ -50,15 +49,15 @@ bool LidarTfLuna::InitializeUart()
     return true;
 }
 
-LidarTfLuna::SensorData LidarTfLuna::GetSensorData() const
+TfLunaSensorData LidarTfLuna::GetSensorData()
 {
     if(m_uart_id == uart0)
     {
-        return uart0_sensor_data;
+        return TfLunaSensorData(GetUart0SensorData());
     }
     else
     {
-        return uart1_sensor_data;
+        return TfLunaSensorData(GetUart1SensorData());
     }
 }
 
@@ -74,12 +73,14 @@ void LidarTfLuna::UartZeroRxHandler()
             return;
         }
 
+        TfLunaSensorData& uart0_sensor_data = GetUart0SensorData();
+
         uart0_sensor_data.distance_cm = buffer[2] + (buffer[3] << UART_SHIFT_BITS);
         uart0_sensor_data.signal_strength = buffer[4] + (buffer[5] << UART_SHIFT_BITS);
         // Note that the raw temperature value is meaningless without division by 8 and subtraction by 256, according to the TF Luna documentation.
         uart0_sensor_data.temperature_c = (buffer[6] + (buffer[7] << UART_SHIFT_BITS)) / UART_TEMPERATURE_DIVISOR - UART_TEMPERATURE_OFFSET;
 
-        printf("LidarTfLuna::UartRxHandler() -> RX: {%d cm, %d, %d celcius}\n",uart0_sensor_data.distance_cm,uart0_sensor_data.signal_strength,uart0_sensor_data.temperature_c);
+        //printf("LidarTfLuna::UartZeroRxHandler() -> RX: {%d cm, %d, %d celcius}\n",uart0_sensor_data.distance_cm,uart0_sensor_data.signal_strength,uart0_sensor_data.temperature_c);
     }
 }
 
@@ -95,12 +96,14 @@ void LidarTfLuna::UartOneRxHandler()
             return;
         }
 
+        TfLunaSensorData& uart1_sensor_data = GetUart1SensorData();
+
         uart1_sensor_data.distance_cm = buffer[2] + (buffer[3] << UART_SHIFT_BITS);
         uart1_sensor_data.signal_strength = buffer[4] + (buffer[5] << UART_SHIFT_BITS);
         // Note that the raw temperature value is meaningless without division by 8 and subtraction by 256, according to the TF Luna documentation.
         uart1_sensor_data.temperature_c = (buffer[6] + (buffer[7] << UART_SHIFT_BITS)) / UART_TEMPERATURE_DIVISOR - UART_TEMPERATURE_OFFSET;
 
-        printf("LidarTfLuna::UartRxHandler() -> RX: {%d cm, %d, %d celcius}\n",uart1_sensor_data.distance_cm,uart1_sensor_data.signal_strength,uart1_sensor_data.temperature_c);
+        //printf("LidarTfLuna::UartOneRxHandler() -> RX: {%d cm, %d, %d celcius}\n",uart1_sensor_data.distance_cm,uart1_sensor_data.signal_strength,uart1_sensor_data.temperature_c);
     }
 }
 }

@@ -43,7 +43,10 @@ public:
             azimuth_degrees = other.azimuth_degrees;
             elevation_degrees = other.elevation_degrees;
             distance_cm = other.distance_cm;
+
+            return *this;
         }
+
     };
 
     Scanner(ILidar& lidar, 

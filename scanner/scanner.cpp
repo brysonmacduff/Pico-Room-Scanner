@@ -3,9 +3,9 @@
 namespace RoomScanner
 {
 
-Scanner::Scanner(LidarTfLuna& lidar, 
-    ServoMiuzeiFS08MD& azimuth_servo, 
-    ServoMiuzeiFS08MD& elevation_servo,
+Scanner::Scanner(ILidar& lidar, 
+    IServo& azimuth_servo, 
+    IServo& elevation_servo,
     std::chrono::milliseconds scan_interval, 
     float azimuth_interval,
     float elevation_interval
@@ -69,6 +69,23 @@ void Scanner::CreateScanningPlan()
             el_angle += m_elevation_interval;
         }
     }
+}
+
+bool Scanner::Run()
+{
+    for(auto it = m_coordinates.begin(); it != m_coordinates.end(); ++it)
+    {
+        // Save the distance coming from the lidar sensor
+        it->distance_cm = static_cast<float>(m_lidar.GetDistance());
+        // Wait for the servos to point to target angles
+        sleep_ms(m_scan_interval.count());
+
+        m_azimuth_servo.SetTargetAngle(it->azimuth_degrees);
+        m_elevation_servo.SetTargetAngle(it->elevation_degrees);
+        printf("Scanner::Run() -> az: {%f}, el: {%f}", it->azimuth_degrees, it->elevation_degrees);
+    }
+
+    return true;
 }
 
 }

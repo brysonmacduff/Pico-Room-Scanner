@@ -46,9 +46,9 @@ public:
         }
     };
 
-    Scanner(LidarTfLuna& lidar, 
-        ServoMiuzeiFS08MD& azimuth_servo, 
-        ServoMiuzeiFS08MD& elevation_servo, 
+    Scanner(ILidar& lidar, 
+        IServo& azimuth_servo, 
+        IServo& elevation_servo, 
         std::chrono::milliseconds scan_interval, 
         float azimuth_interval,
         float elevation_interval
@@ -67,9 +67,9 @@ protected:
 
     void CreateScanningPlan();
 
-    LidarTfLuna& m_lidar;
-    ServoMiuzeiFS08MD& m_azimuth_servo;
-    ServoMiuzeiFS08MD& m_elevation_servo;
+    ILidar& m_lidar;
+    IServo& m_azimuth_servo;
+    IServo& m_elevation_servo;
     std::chrono::milliseconds m_scan_interval;
     float m_azimuth_interval;
     float m_elevation_interval;

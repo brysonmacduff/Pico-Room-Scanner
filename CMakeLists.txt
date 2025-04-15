@@ -29,4 +29,5 @@ find_library(PULSE_WIDTH_MODULATOR
 
 add_subdirectory(servo)
 add_subdirectory(lidar)
+add_subdirectory(scanner)
 add_subdirectory(src)

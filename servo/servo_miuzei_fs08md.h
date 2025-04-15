@@ -13,6 +13,8 @@ public:
     ServoMiuzeiFS08MD(uint8_t gpio);
     ~ServoMiuzeiFS08MD() = default;
     bool SetTargetAngle(float degrees) override;
+    float GetUpperLimitAngleDegrees() override;
+
 protected:
 
     static constexpr uint32_t PWM_FREQUENCY_HZ = 50;

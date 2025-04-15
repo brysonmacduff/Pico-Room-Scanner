@@ -1,4 +1,4 @@
-#include "servo_miuzei_fs08md.h"
+#include "scanner.h"
 
 int main()
 {

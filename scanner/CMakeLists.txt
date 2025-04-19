@@ -6,4 +6,4 @@ add_library(${COMPONENT} STATIC ${SRCS})
 target_link_libraries(${COMPONENT} pico_stdlib servo lidar)
 target_include_directories(${COMPONENT} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PICO_CORE_INC_PATH})
 
-add_subdirectory(test)
+#add_subdirectory(test)

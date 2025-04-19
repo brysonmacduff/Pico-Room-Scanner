@@ -53,8 +53,8 @@ public:
         IServo& azimuth_servo, 
         IServo& elevation_servo, 
         std::chrono::milliseconds scan_interval, 
-        float azimuth_interval,
-        float elevation_interval
+        float azimuth_interval_degrees,
+        float elevation_interval_degrees
     );
 
     // Starts the scan sequence. Returns true once complete or false if scanning failed.
@@ -74,8 +74,8 @@ protected:
     IServo& m_azimuth_servo;
     IServo& m_elevation_servo;
     std::chrono::milliseconds m_scan_interval;
-    float m_azimuth_interval;
-    float m_elevation_interval;
+    float m_azimuth_interval_degrees;
+    float m_elevation_interval_degrees;
   
     std::vector<Coordinate> m_coordinates;
 };

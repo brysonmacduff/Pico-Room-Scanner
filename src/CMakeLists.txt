@@ -2,7 +2,7 @@ file(GLOB SRCS "*.h" "*.cpp")
 
 add_executable(${PROJECT_NAME} ${SRCS})
 
-target_link_libraries(${PROJECT_NAME} pico_stdlib scanner)
+target_link_libraries(${PROJECT_NAME} pico_stdlib scanner pico_cyw43_arch_none)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # configure to use stdout over usb

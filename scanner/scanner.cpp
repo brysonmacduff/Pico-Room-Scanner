@@ -14,8 +14,8 @@ m_lidar(lidar),
 m_azimuth_servo(azimuth_servo), 
 m_elevation_servo(elevation_servo),
 m_scan_interval(scan_interval),
-m_azimuth_interval(azimuth_interval),
-m_elevation_interval(elevation_interval)
+m_azimuth_interval_degrees(azimuth_interval),
+m_elevation_interval_degrees(elevation_interval)
 {
     CreateScanningPlan();
 }
@@ -23,8 +23,8 @@ m_elevation_interval(elevation_interval)
 void Scanner::CreateScanningPlan()
 {
     // Determine how many azimuth and elevation angles are required in the scan plan
-    uint32_t azimuth_count = m_azimuth_servo.GetUpperLimitAngleDegrees() / m_azimuth_interval;
-    uint32_t elevation_count = m_elevation_servo.GetUpperLimitAngleDegrees() / m_elevation_interval;
+    uint32_t azimuth_count = m_azimuth_servo.GetUpperLimitAngleDegrees() / m_azimuth_interval_degrees;
+    uint32_t elevation_count = m_elevation_servo.GetUpperLimitAngleDegrees() / m_elevation_interval_degrees;
     uint64_t coordinate_count = azimuth_count * elevation_count;
     
     m_coordinates = std::vector<Coordinate>(coordinate_count);
@@ -34,6 +34,8 @@ void Scanner::CreateScanningPlan()
     float az_angle = 0;
     float el_angle = 0;
 
+    uint64_t coordinate_index = 0;
+
     AngleScanDirection az_direction = AngleScanDirection::POSITIVE;
 
     // In short, these loops create a scanning plan that scans the entire azimuth range for each elevation angle, then repeats for the next elevation angle
@@ -42,7 +44,8 @@ void Scanner::CreateScanningPlan()
         for(uint64_t az_index = 0; az_index < azimuth_count; ++az_index)
         {
             // Create the coordinate
-            m_coordinates[el_index + az_index] = Coordinate(az_angle,el_angle,0);
+            m_coordinates[coordinate_index] = Coordinate(az_angle,el_angle,0);
+            ++coordinate_index;
 
             // Determine which way to rotate the azimuth servo
             if(az_angle >= m_azimuth_servo.GetUpperLimitAngleDegrees())
@@ -58,16 +61,17 @@ void Scanner::CreateScanningPlan()
             
             if(az_direction == AngleScanDirection::POSITIVE)
             {
-                az_angle += m_azimuth_interval;
+                az_angle += m_azimuth_interval_degrees;
             }
             else if(az_direction == AngleScanDirection::NEGATIVE)
             {
-                az_angle -= m_azimuth_interval;
+                az_angle -= m_azimuth_interval_degrees;
             }
 
-            // Elevation always increments. Note that the elevation angle must start at zero.
-            el_angle += m_elevation_interval;
         }
+
+        // Elevation always increments. Note that the elevation angle must start at zero.
+        el_angle += m_elevation_interval_degrees;
     }
 }
 
@@ -82,7 +86,7 @@ bool Scanner::Run()
 
         m_azimuth_servo.SetTargetAngle(it->azimuth_degrees);
         m_elevation_servo.SetTargetAngle(it->elevation_degrees);
-        printf("Scanner::Run() -> az: {%f}, el: {%f}", it->azimuth_degrees, it->elevation_degrees);
+        printf("Scanner::Run() -> az: {%f}, el: {%f}, range: {%f cm}\n", it->azimuth_degrees, it->elevation_degrees, it->distance_cm);
     }
 
     return true;

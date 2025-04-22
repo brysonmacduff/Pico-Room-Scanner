@@ -1,0 +1,12 @@
+set(COMPONENT "scanner")
+
+set(SERVO_INTERFACE_DIR "${CMAKE_SOURCE_DIR}/../hal/servo")
+set(LIDAR_INTERFACE_DIR "${CMAKE_SOURCE_DIR}/../hal/lidar")
+set(SLEEPER_INTERFACE_DIR "${CMAKE_SOURCE_DIR}/../hal/sleeper") 
+
+file(GLOB SRCS "*.h" "${LIDAR_INTERFACE_DIR}/*.h" "${SERVO_INTERFACE_DIR}/*.h" "${SLEEPER_INTERFACE_DIR}/*.h" "*.cpp" )
+
+add_library(${COMPONENT} STATIC ${SRCS})
+target_include_directories(${COMPONENT} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PICO_CORE_INC_PATH} ${LIDAR_INTERFACE_DIR} ${SERVO_INTERFACE_DIR} ${SLEEPER_INTERFACE_DIR})
+
+add_subdirectory(test)

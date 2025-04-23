@@ -5,4 +5,6 @@ include(CTest)
 find_package(GTest REQUIRED)
 include(GoogleTest)
 
+find_package(spdlog REQUIRED)
+
 add_subdirectory(scanner)

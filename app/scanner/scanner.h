@@ -59,11 +59,19 @@ public:
         ISleeper& sleeper, 
         std::chrono::milliseconds scan_interval, 
         float azimuth_interval_degrees,
-        float elevation_interval_degrees
+        float elevation_interval_degrees,
+        bool is_verbose = true
     );
 
     // Starts the scan sequence. Returns true once complete or false if scanning failed.
     bool Run();
+
+    std::vector<Coordinate>::const_iterator BeginCoordinates() const;
+    std::vector<Coordinate>::const_iterator EndCoordinates() const;
+
+    size_t GetCoordinateCount() const;
+    float GetAzimuthUpperLimitDegrees() const;
+    float GetElevationUpperLimitDegrees() const;
 
 protected:
 
@@ -82,6 +90,7 @@ protected:
     std::chrono::milliseconds m_scan_interval;
     float m_azimuth_interval_degrees;
     float m_elevation_interval_degrees;
+    bool m_is_verbose;
   
     std::vector<Coordinate> m_coordinates;
 };

@@ -9,7 +9,8 @@ Scanner::Scanner(ILidar& lidar,
     ISleeper& sleeper,
     std::chrono::milliseconds scan_interval, 
     float azimuth_interval,
-    float elevation_interval
+    float elevation_interval,
+    bool is_verbose
 ) : 
 m_lidar(lidar), 
 m_azimuth_servo(azimuth_servo), 
@@ -17,7 +18,8 @@ m_elevation_servo(elevation_servo),
 m_sleeper(sleeper),
 m_scan_interval(scan_interval),
 m_azimuth_interval_degrees(azimuth_interval),
-m_elevation_interval_degrees(elevation_interval)
+m_elevation_interval_degrees(elevation_interval),
+m_is_verbose(is_verbose)
 {
     CreateScanningPlan();
 }
@@ -90,10 +92,38 @@ bool Scanner::Run()
         // Save the distance coming from the lidar sensor
         it->distance_cm = static_cast<float>(m_lidar.GetDistance());
 
-        printf("Scanner::Run() -> az: {%f}, el: {%f}, range: {%f cm}\n", it->azimuth_degrees, it->elevation_degrees, it->distance_cm);
+        if(m_is_verbose)
+        {
+            printf("Scanner::Run() -> az: {%f}, el: {%f}, range: {%f cm}\n", it->azimuth_degrees, it->elevation_degrees, it->distance_cm);
+        }
     }
 
     return true;
 }
 
+std::vector<Scanner::Coordinate>::const_iterator Scanner::BeginCoordinates() const
+{
+    return m_coordinates.begin();
 }
+
+std::vector<Scanner::Coordinate>::const_iterator Scanner::EndCoordinates() const
+{
+    return m_coordinates.end();
+}
+
+size_t Scanner::GetCoordinateCount() const
+{
+    return m_coordinates.size();
+}
+
+float Scanner::GetAzimuthUpperLimitDegrees() const
+{
+    return m_azimuth_servo.GetUpperLimitAngleDegrees();
+}
+
+float Scanner::GetElevationUpperLimitDegrees() const
+{
+    return m_elevation_servo.GetUpperLimitAngleDegrees();
+}
+
+} // namespace RoomScanner

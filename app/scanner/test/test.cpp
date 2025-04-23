@@ -103,7 +103,6 @@ protected:
             return false;
         }
 
-        bool is_scan_start = true;
         bool is_az_adding = true;
 
         float expected_az = -azimuth_interval_degrees;

@@ -10,23 +10,19 @@ set(PICO_CORE_INC_PATH "/usr/include/pico-core")
 # note: this must happen before project()
 include(pico_sdk_import.cmake)
 
+project(hal LANGUAGES C CXX ASM)
+
 # initialize the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-project(room_scanner C CXX ASM)
-
+# link PWM library from Pico-Core
 find_library(PULSE_WIDTH_MODULATOR
   NAMES pulse_width_modulator
   PATHS ${PICO_CORE_LIB_PATH}
 )
 
-# include testing dependencies
-#set(GTEST_ROOT /usr/src/googletest)
-#include(CTest)
-#find_package(GTest REQUIRED)
-#find_package(spdlog REQUIRED)
-#include(GoogleTest)
-
 add_subdirectory(servo)
 add_subdirectory(lidar)
+add_subdirectory(sleeper)
+add_subdirectory(scanner)
 add_subdirectory(src)

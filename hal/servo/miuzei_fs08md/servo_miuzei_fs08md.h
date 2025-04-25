@@ -1,5 +1,7 @@
+#pragma once
+
 #include "i_servo.h"
-#include "pulse_width_modulator.h"
+#include <pulse_width_modulator.h>
 #include <chrono>
 
 namespace RoomScanner
@@ -13,6 +15,8 @@ public:
     ServoMiuzeiFS08MD(uint8_t gpio);
     ~ServoMiuzeiFS08MD() = default;
     bool SetTargetAngle(float degrees) override;
+    float GetUpperLimitAngleDegrees() const override;
+
 protected:
 
     static constexpr uint32_t PWM_FREQUENCY_HZ = 50;

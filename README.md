@@ -6,12 +6,31 @@
         - Benewake TF Luna
     - Servo
         - Miuzei FS08MD
+* Dependencies
+    - CMake
+    - GCC
+    - Pico-Core
+        - https://github.com/brysonmacduff/Pico-Core
+    - GTest
+    - spdlog
+* Build Configuration
+    - Modify the following cmake variables in the top-level CMakeLists.txt file according to your development environment.
+        - PICO_SDK_PATH
+        - PICO_CORE_LIB_PATH
+        - PICO_CORE_INC_PATH
 * Build Instructions
-    - cmake -S . -B build
-    - cd build
-    - make
+    - This project is separated into two distinct cmake projects. 
+        - The "app" project contains c++ source code that is safe to use across target platforms. 
+            - The "app" project supports unit testing via GoogleTest.
+        - The "hal" (hardward abstraction layer) project interfaces with the Raspberry Pi Pico SDK.
+            - The hal builds the project firmware (using app project source code) that can be deployed to the Pico W.
+    - CLI Commands
+        - cd hal
+        - cmake -S . -B build
+        - cd build
+        - make
 * Run Instructions
-    - Transfer uf2 file from build directory to Raspberry Pi Pico W drive.
+    - Transfer uf2 file from the hal src build directory to Raspberry Pi Pico W drive.
 * Reading Firmware USB Serial Output
     - Manual
         - Identify serial port
@@ -24,5 +43,5 @@
         - Before loading firmware to the pico:
             - sudo ./record_serial_logs.sh
             - tail -f serial_log.txt
-
-
+* Author Contact Information
+    - brysonmacduff@gmail.com

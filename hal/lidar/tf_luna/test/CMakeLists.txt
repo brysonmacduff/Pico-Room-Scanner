@@ -3,7 +3,7 @@ set(TEST_FIRMWARE_NAME ${COMPONENT}_test)
 file(GLOB SRCS "*.h" "*.cpp")
 
 add_executable(${TEST_FIRMWARE_NAME} ${SRCS})
-target_link_libraries(${TEST_FIRMWARE_NAME} PUBLIC lidar pico_cyw43_arch_none)
+target_link_libraries(${TEST_FIRMWARE_NAME} PUBLIC lidar_tf_luna pico_cyw43_arch_none)
 target_include_directories(${TEST_FIRMWARE_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # configure to use stdout over usb

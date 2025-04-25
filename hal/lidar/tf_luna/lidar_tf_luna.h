@@ -1,3 +1,5 @@
+#pragma once
+
 #include "i_lidar.h"
 #include "pico/stdlib.h"
 #include "hardware/uart.h"

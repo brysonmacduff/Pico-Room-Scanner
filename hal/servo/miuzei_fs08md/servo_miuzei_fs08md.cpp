@@ -25,7 +25,7 @@ bool ServoMiuzeiFS08MD::SetTargetAngle(float degrees)
     return m_pwm.SetDutyCycle(duty_cycle);
 }
 
-float ServoMiuzeiFS08MD::GetUpperLimitAngleDegrees()
+float ServoMiuzeiFS08MD::GetUpperLimitAngleDegrees() const
 {
     return UPPER_LIMIT_ANGLE_DEGREES;
 }

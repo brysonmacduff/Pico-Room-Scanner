@@ -33,17 +33,17 @@ public:
         return true;
     }
 
-    float GetUpperLimitAngleDegrees() override
+    float GetUpperLimitAngleDegrees() const override
     {
         return UPPER_LIMIT_ANGLE_DEGREES;
     }
 
-    auto BeginTargetedAngles() const
+    std::deque<float>::const_iterator BeginTargetedAngles() const
     {
         return m_targeted_angles.begin();
     }
 
-    auto EndTargetedAngles() const
+    std::deque<float>::const_iterator EndTargetedAngles() const
     {
         return m_targeted_angles.end();
     }
@@ -151,6 +151,78 @@ protected:
 
         return true;
     }
+
+    /* This function validates that the scanning plan was correct dispatched to the azimuth servo by checking the following:
+        - Validates that azimuth angles are changing in the right direction (up or down)
+        - Validates that the azimuth angles are changing at the right angular interval
+        - Validates that the correct number of azimuth angles have been received
+    */
+    static bool ValidateTargetedAngles(const MockServo& mock_az_servo, const MockServo& mock_el_servo, float azimuth_interval_degrees, float elevation_interval_degrees, int expected_angle_count)
+    {
+        if(mock_az_servo.GetTargetedAngleCount() != expected_angle_count)
+        {
+            spdlog::error("ScannerTest::{}() -> Wrong number of azimuth angles. Expected: {}, Actual: {}",__func__,expected_angle_count,mock_az_servo.GetTargetedAngleCount());
+            return false;
+        }
+
+        if(mock_el_servo.GetTargetedAngleCount() != expected_angle_count)
+        {
+            spdlog::error("ScannerTest::{}() -> Wrong number of elevation angles. Expected: {}, Actual: {}",__func__,expected_angle_count,mock_el_servo.GetTargetedAngleCount());
+            return false;
+        }
+
+        bool is_azimuth_adding = true;
+        float az_angle = 0;
+        float el_angle = -elevation_interval_degrees;
+
+        auto it_el = mock_el_servo.BeginTargetedAngles();
+        auto it_az = mock_az_servo.BeginTargetedAngles();
+
+        while(true)
+        {
+            if(it_az == mock_az_servo.EndTargetedAngles() || it_el == mock_el_servo.EndTargetedAngles())
+            {
+                break;
+            }
+
+            if(az_angle <= 0)
+            {
+                is_azimuth_adding = true;
+                el_angle += elevation_interval_degrees;
+            }
+            else if(az_angle >= mock_az_servo.GetUpperLimitAngleDegrees())
+            {
+                is_azimuth_adding = false;
+                el_angle += elevation_interval_degrees;
+            }
+
+            if(az_angle != *it_az)
+            {
+                spdlog::error("ScannerTest::{}() -> Wrong azimuth angle. Expected: {}, Actual: {}",__func__, az_angle, *it_az);
+                return false;
+            }
+            
+            if(el_angle != *it_el)
+            {
+                spdlog::error("ScannerTest::{}() -> Wrong elevation angle. Expected: {}, Actual: {}",__func__, el_angle, *it_el);
+                return false;
+            }
+
+            if(is_azimuth_adding)
+            {
+                az_angle += azimuth_interval_degrees;
+            }
+            else
+            {
+                az_angle -= azimuth_interval_degrees;
+            }
+
+            ++it_az;
+            ++it_el;
+        }
+
+        return true;
+    }
 };
 
 TEST_F(ScannerTest, Constructor)
@@ -165,7 +237,28 @@ TEST_F(ScannerTest, Constructor)
         false));
 }
 
+// Verify that the scanning plan is valid
 TEST_F(ScannerTest, ScanningPlan)
+{
+    Scanner scanner(m_mock_lidar,
+        m_mock_azimuth_servo,
+        m_mock_elevation_servo,
+        m_mock_sleeper,
+        SCAN_INTERVAL,
+        AZIMUTH_INTERVAL_DEGREES,
+        ELEVATION_INTERVAL_DEGREES,
+        false
+    );
+
+    const size_t expected_angle_count = std::pow(m_mock_azimuth_servo.GetUpperLimitAngleDegrees() / AZIMUTH_INTERVAL_DEGREES, 2);
+    
+    const bool is_scan_sequence_valid = ValidateScanningPlan(scanner,expected_angle_count,AZIMUTH_INTERVAL_DEGREES,ELEVATION_INTERVAL_DEGREES);
+
+    ASSERT_TRUE(is_scan_sequence_valid);
+}
+
+// Verify the targeted azimuth and elevation angles are correct.
+TEST_F(ScannerTest, Run)
 {
     Scanner scanner(m_mock_lidar,
         m_mock_azimuth_servo,
@@ -179,11 +272,11 @@ TEST_F(ScannerTest, ScanningPlan)
 
     ASSERT_TRUE(scanner.Run());
 
-    const size_t expected_angle_count = std::pow(m_mock_azimuth_servo.GetUpperLimitAngleDegrees() / AZIMUTH_INTERVAL_DEGREES, 2);
-    
-    const bool is_scan_sequence_valid = ValidateScanningPlan(scanner,expected_angle_count,AZIMUTH_INTERVAL_DEGREES,ELEVATION_INTERVAL_DEGREES);
+    const size_t expected_angle_count = std::pow(m_mock_azimuth_servo.GetUpperLimitAngleDegrees() / AZIMUTH_INTERVAL_DEGREES, 2); 
 
-    ASSERT_TRUE(is_scan_sequence_valid);
+    const bool is_valid = ValidateTargetedAngles(m_mock_azimuth_servo,m_mock_elevation_servo,AZIMUTH_INTERVAL_DEGREES,ELEVATION_INTERVAL_DEGREES,expected_angle_count);
+
+    ASSERT_TRUE(is_valid);
 }
 
 }

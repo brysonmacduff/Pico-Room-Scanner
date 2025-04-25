@@ -1,5 +1,6 @@
 # Exclude build directory.
-build
+app/build
+hal/build
 
 # Exclude VS code config files
 .vscode

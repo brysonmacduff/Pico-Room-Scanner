@@ -20,8 +20,8 @@ static constexpr uint8_t UART_RX_GPIO = 1;
 
 // Scanner
 static constexpr std::chrono::milliseconds SCAN_INTERVAL {1000};
-static constexpr float AZIMUTH_INTERVAL_DEGREES = 15;
-static constexpr float ELEVATION_INTERVAL_DEGREES = 15;
+static constexpr float AZIMUTH_INTERVAL_DEGREES = 5;
+static constexpr float ELEVATION_INTERVAL_DEGREES = 5;
 
 int main()
 {

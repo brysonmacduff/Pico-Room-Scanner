@@ -43,5 +43,7 @@
         - Before loading firmware to the pico:
             - sudo ./record_serial_logs.sh
             - tail -f serial_log.txt
+* Analysis Instructions
+    - This project includes scripts for analyzing scan results. See the README under the "analysis" directory.
 * Author Contact Information
     - brysonmacduff@gmail.com
